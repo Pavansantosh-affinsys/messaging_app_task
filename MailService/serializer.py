@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from MailService.models import AccountHolder, TransactionsDetails, Recommendations
 
 
@@ -19,4 +18,3 @@ class RecommendationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recommendations
         fields = '__all__'
-
