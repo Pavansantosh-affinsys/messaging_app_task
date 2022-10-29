@@ -5,16 +5,16 @@ from MailService.models import AccountHolder, TransactionsDetails, Recommendatio
 class AccountHolderSerializer(serializers.ModelSerializer):
     class Meta:
         model = AccountHolder
-        fields = '__all__'
+        fields = "__all__"
 
 
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TransactionsDetails
-        fields = '__all__'
+        fields = "__all__"
 
 
 class RecommendationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recommendations
-        fields = '__all__'
+        fields = "__all__"
