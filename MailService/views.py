@@ -37,7 +37,7 @@ class TransactionMixin(
 ):
 
     queryset = TransactionsDetails.objects.all()
-    serializer_class = TransactionsDetails
+    serializer_class = TransactionSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

@@ -1,8 +1,16 @@
 from django.db import models
 from django.db.models import signals, F
 from django.dispatch import receiver
-from datetime import datetime
-from .utility import message_sms, email
+from .utility import (
+    message_sms_account_created,
+    email_account_created,
+    sufficient_amount,
+    message_sms_transaction_debit,
+    email_account_transaction_debit,
+    message_sms_transaction_credit,
+    email_account_transaction_credit,
+)
+from django.core.exceptions import ValidationError
 
 
 class AccountHolder(models.Model):
@@ -18,18 +26,18 @@ class AccountHolder(models.Model):
 
 
 @receiver(signals.post_save, sender=AccountHolder)
-def message_on_create(sender, instance, created, *args, **kwargs):
+def communication(sender, instance, created, *args, **kwargs):
     if created:
-        email(instance)
-        message_sms(instance)
+        email_account_created(instance)
+        message_sms_account_created(instance)
 
 
 class TransactionsDetails(models.Model):
-    beneficiary_ID = models.ForeignKey(
-        AccountHolder, on_delete=models.CASCADE, related_name="credit"
-    )
     payee_ID = models.ForeignKey(
         AccountHolder, on_delete=models.CASCADE, related_name="debit"
+    )
+    beneficiary_ID = models.ForeignKey(
+        AccountHolder, on_delete=models.CASCADE, related_name="credit"
     )
     amount = models.PositiveIntegerField(null=False, blank=False)
     transaction_date = models.DateTimeField(
@@ -39,12 +47,31 @@ class TransactionsDetails(models.Model):
 
 @receiver(signals.pre_save, sender=TransactionsDetails)
 def update_account_table(sender, instance, **kwargs):
-    AccountHolder.objects.filter(pk=instance.beneficiary_ID).update(
+    if not sufficient_amount(instance.payee_ID.id, instance.amount, AccountHolder):
+        raise ValidationError("insufficient balance")
+    AccountHolder.objects.filter(pk=instance.payee_ID.id).update(
+        account_balance=F("account_balance") - instance.amount
+    )
+    AccountHolder.objects.filter(pk=instance.beneficiary_ID.id).update(
         account_balance=F("account_balance") + instance.amount
     )
-    AccountHolder.objects.filter(pk=instance.payee_ID).update(
-        account_balance=F("account_balance") + instance.amount
-    )
+
+
+@receiver(signals.post_save, sender=TransactionsDetails)
+def inform(sender, instance, created, *args, **kwargs):
+    if created:
+        email_account_transaction_debit(
+            instance.payee_ID.id, instance.amount, AccountHolder
+        )
+        email_account_transaction_credit(
+            instance.beneficiary_ID.id, instance.amount, AccountHolder
+        )
+        message_sms_transaction_debit(
+            instance.payee_ID.id, instance.amount, AccountHolder
+        )
+        message_sms_transaction_credit(
+            instance.beneficiary_ID.id, instance.amount, AccountHolder
+        )
 
 
 class Recommendations(models.Model):
