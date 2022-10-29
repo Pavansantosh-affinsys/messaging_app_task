@@ -1,7 +1,9 @@
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
-from .utility import message_sms,email
+from datetime import datetime
+from .utility import message_sms, email
+
 
 class AccountHolder(models.Model):
     firstname = models.CharField(max_length=20, null=False, blank=False)
@@ -24,10 +26,9 @@ class TransactionsDetails(models.Model):
     beneficiary_ID = models.ForeignKey(AccountHolder, on_delete=models.CASCADE, related_name='credit')
     payee_ID = models.ForeignKey(AccountHolder, on_delete=models.CASCADE, related_name='debit')
     amount = models.PositiveIntegerField(null=False, blank=False)
+    transaction_date = models.DateTimeField('Created Time', auto_now_add=True, null=True)
 
 
 class Recommendations(models.Model):
     time = models.DateTimeField()
     description = models.TextField(max_length=100)
-
-

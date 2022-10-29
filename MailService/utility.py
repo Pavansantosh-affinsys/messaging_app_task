@@ -1,5 +1,5 @@
 from twilio.rest import Client
-from django.conf import settings
+from message_queue import settings
 from django.core.mail import send_mail
 
 
@@ -17,5 +17,5 @@ def email(instance):
     subject = 'Welcome to the family'
     message = f'Hello {instance.firstname},\nThankyou for creating an account in BankBuddy'
     email_from = settings.EMAIL_HOST_USER
-    send_mail(subject, message, email_from, instance.email)
+    send_mail(subject, message, email_from, [instance.email])
 
