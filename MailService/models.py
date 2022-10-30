@@ -48,6 +48,8 @@ class TransactionsDetails(models.Model):
 
 @receiver(signals.pre_save, sender=TransactionsDetails)
 def update_account_table(sender, instance, **kwargs):
+    if instance.payee_ID.id == instance.beneficiary_ID.id:
+        raise ValidationError("Self transaction is not allowed")
     if not sufficient_amount(instance.payee_ID.id, instance.amount, AccountHolder):
         raise ValidationError("insufficient balance")
     AccountHolder.objects.filter(pk=instance.payee_ID.id).update(
