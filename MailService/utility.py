@@ -10,7 +10,6 @@ def message_sms_account_created(instance):
         from_=f"{settings.mobile_number}",
         to=f"+91{instance.mobile_number}",
     )
-    print(message.sid)
 
 
 def email_account_created(instance):
@@ -31,7 +30,6 @@ def message_sms_transaction_debit(key, amount, account_holder):
         from_=f"{settings.mobile_number}",
         to=f"+91{payee.mobile_number}",
     )
-    print(message.sid)
 
 
 def message_sms_transaction_credit(key, amount, account_holder):
@@ -43,7 +41,6 @@ def message_sms_transaction_credit(key, amount, account_holder):
         from_=f"{settings.mobile_number}",
         to=f"+91{beneficiary.mobile_number}",
     )
-    print(message.sid)
 
 
 def email_account_transaction_debit(key, amount, account_holder):
