@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.db.models import signals, F
 from django.dispatch import receiver
@@ -12,6 +13,7 @@ from .utility import (
 )
 from django.core.exceptions import ValidationError
 from .tasks import email_recommendations
+from django.utils import timezone
 
 
 class AccountHolder(models.Model):
