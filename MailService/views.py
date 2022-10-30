@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import status, mixins, generics, viewsets, response, serializers
 from .models import AccountHolder, TransactionsDetails, Recommendations
 from .serializer import (
@@ -59,8 +58,9 @@ class RecommendationViewSet(viewsets.ViewSet):
             raise serializers.ValidationError("This data already exists")
         if serializer.is_valid():
             serializer.save()
-            print(serializer)
-            return response.Response({"data": serializer.data}, status=status.HTTP_200_OK)
+            return response.Response(
+                {"data": serializer.data}, status=status.HTTP_200_OK
+            )
         return response.Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
     def update(self, request, pk):
@@ -69,7 +69,9 @@ class RecommendationViewSet(viewsets.ViewSet):
             data = Recommendations.objects.get(pk=pk)
             serializer.is_valid(raise_exception=True)
             serializer.update(data, serializer.data)
-            return response.Response({"data": serializer.data}, status=status.HTTP_200_OK)
+            return response.Response(
+                {"data": serializer.data}, status=status.HTTP_200_OK
+            )
         except Recommendations.DoesNotExist:
             return response.Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -77,6 +79,8 @@ class RecommendationViewSet(viewsets.ViewSet):
         try:
             serializer = Recommendations.objects.get(pk=pk)
             serializer.delete()
-            return response.Response({"message": "deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+            return response.Response(
+                {"message": "deleted successfully"}, status=status.HTTP_204_NO_CONTENT
+            )
         except Recommendations.DoesNotExist:
             return response.Response(status=status.HTTP_404_NOT_FOUND)

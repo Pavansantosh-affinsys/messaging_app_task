@@ -11,6 +11,7 @@ from .utility import (
     email_account_transaction_credit,
 )
 from django.core.exceptions import ValidationError
+from .tasks import email_recommendations
 
 
 class AccountHolder(models.Model):
@@ -77,3 +78,12 @@ def inform(sender, instance, created, *args, **kwargs):
 class Recommendations(models.Model):
     time = models.DateTimeField(blank=False, null=False)
     description = models.CharField(max_length=100, blank=False, null=False)
+
+
+@receiver(signals.post_save, sender=Recommendations)
+def schedule_task(sender, instance, created, *args, **kwargs):
+    emails = list(AccountHolder.objects.all().values_list("email", flat=True))
+    if created:
+        email_recommendations.apply_async(
+            args=(emails, instance.description), eta=instance.time
+        )

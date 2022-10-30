@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "MailService",
     "rest_framework",
+    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -129,13 +130,23 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 env = environ.Env()
 environ.Env.read_env()
 
+# messaging settings
 account_sid = env("TWILIO_ACCOUNT_SID")
 auth_token = env("TWILIO_AUTH_TOKEN")
 mobile_number = env("TWILI0_NUM")
 
+# email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+
+# celery settings
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_TIMEZONE = "Asia/Kolkata"
