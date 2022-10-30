@@ -14,7 +14,15 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class RecommendationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Recommendations
-        fields = "__all__"
+class RecommendationSerializer(serializers.Serializer):
+    def update(self, instance, validated_data):
+        instance.time = validated_data.get("time", instance.time)
+        instance.description = validated_data.get("description", instance.description)
+        instance.save()
+        return instance
+
+    def create(self, validated_data):
+        return Recommendations.objects.create(**validated_data)
+
+    time = serializers.DateTimeField()
+    description = serializers.CharField(max_length=100)

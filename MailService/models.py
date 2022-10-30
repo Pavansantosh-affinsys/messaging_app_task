@@ -57,23 +57,23 @@ def update_account_table(sender, instance, **kwargs):
     )
 
 
-# @receiver(signals.post_save, sender=TransactionsDetails)
-# def inform(sender, instance, created, *args, **kwargs):
-#     if created:
-#         email_account_transaction_debit(
-#             instance.payee_ID.id, instance.amount, AccountHolder
-#         )
-#         email_account_transaction_credit(
-#             instance.beneficiary_ID.id, instance.amount, AccountHolder
-#         )
-#         message_sms_transaction_debit(
-#             instance.payee_ID.id, instance.amount, AccountHolder
-#         )
-#         message_sms_transaction_credit(
-#             instance.beneficiary_ID.id, instance.amount, AccountHolder
-#         )
+@receiver(signals.post_save, sender=TransactionsDetails)
+def inform(sender, instance, created, *args, **kwargs):
+    if created:
+        email_account_transaction_debit(
+            instance.payee_ID.id, instance.amount, AccountHolder
+        )
+        email_account_transaction_credit(
+            instance.beneficiary_ID.id, instance.amount, AccountHolder
+        )
+        message_sms_transaction_debit(
+            instance.payee_ID.id, instance.amount, AccountHolder
+        )
+        message_sms_transaction_credit(
+            instance.beneficiary_ID.id, instance.amount, AccountHolder
+        )
 
 
 class Recommendations(models.Model):
     time = models.DateTimeField(blank=False, null=False)
-    description = models.TextField(max_length=100)
+    description = models.CharField(max_length=100, blank=False, null=False)
