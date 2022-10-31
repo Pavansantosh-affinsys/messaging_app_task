@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "MailService",
     "rest_framework",
     "django_celery_results",
@@ -154,4 +153,4 @@ CELERY_RESULT_BACKEND = "django-db"
 CELERY_TIMEZONE = "Asia/Kolkata"
 
 # celery-beat
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"

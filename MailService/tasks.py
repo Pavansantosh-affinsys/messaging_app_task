@@ -24,4 +24,3 @@ def scheduled_task(self):
     account_details = requests.get(account_url).json()
     emails = [i["email"] for i in account_details]
     send_mail(subject, message, email_from, emails)
-

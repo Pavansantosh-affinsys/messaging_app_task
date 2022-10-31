@@ -12,9 +12,9 @@ app.conf.enable_utc = False
 app.conf.update(timezone=settings.CELERY_TIMEZONE)
 app.autodiscover_tasks()
 app.conf.beat_schedule = {
-    'send-mail-every-sunday': {
-        'task': 'MailService.tasks.scheduled_task',
-        'schedule': crontab(hour=11, minute=0),
+    "send-mail-every-sunday": {
+        "task": "MailService.tasks.scheduled_task",
+        "schedule": crontab(hour=11, minute=0),
     }
 }
 
